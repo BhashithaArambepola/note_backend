@@ -1,5 +1,4 @@
 package lk.ijse.dep8.note.repository;
-
 import lk.ijse.dep8.note.entity.SuperEntity;
 
 import javax.persistence.EntityManager;
@@ -9,43 +8,44 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class CrudRepositoryImpl<T extends SuperEntity, ID extends Serializable> implements CrudRepository<T, ID> {
+public abstract class CrudRepositoryImpl <T extends SuperEntity, ID extends Serializable> implements CrudRepository<T, ID> {
+
     @PersistenceContext
     protected EntityManager entityManager;
 
     private Class<T> entityClzObj;
-
-    @Override
-    public T save(T entity) {
-        return entityManager.merge(entity);
-    }
 
     public CrudRepositoryImpl() {
         this.entityClzObj = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     @Override
-    public void deleteById(ID pk) {
+    public T save(T entity) {
+        return entityManager.merge(entity);
+    }
+
+    @Override
+    public void deleteById(Serializable pk) {
         entityManager.remove(entityManager.getReference(entityClzObj, pk));
     }
 
     @Override
-    public boolean existsById(ID pk) {
+    public boolean existsById(Serializable pk) {
         return findById(pk).isPresent();
     }
 
     @Override
-    public Optional<T> findById(ID pk) {
-        return Optional.of(entityManager.find(entityClzObj, pk));
+    public Optional findById(Serializable pk) {
+        return Optional.ofNullable(entityManager.find(entityClzObj, pk));
     }
 
     @Override
-    public List<T> findAll() {
-        return entityManager.createQuery("SELECT e FROM " + entityClzObj.getName() + " e", entityClzObj).getResultList();
+    public List findAll() {
+        return entityManager.createQuery("SELECT e FROM " + entityClzObj.getName() + " e" , entityClzObj).getResultList();
     }
 
     @Override
     public long count() {
-        return entityManager.createQuery("SELECT count (e) FROM " + entityClzObj.getName() + " e", Long.class).getSingleResult();
+        return entityManager.createQuery("SELECT COUNT(e) FROM " + entityClzObj.getName() + " e" , Long.class).getSingleResult();
     }
 }
