@@ -1,12 +1,10 @@
 package lk.ijse.dep8.note.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,4 +20,11 @@ public class User implements SuperEntity{
     private String password;
     @Column(nullable = false, name = "full_name")
     private String fullName;
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.REMOVE})
+    private List<Note>notes=new ArrayList<>();
+
+    private void beforePersist(){
+        notes.forEach(note -> note.setUser(this));
+    }
 }

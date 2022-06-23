@@ -81,4 +81,18 @@ class UserRepositoryImplTest {
         assertTrue(userRepository.findAll().size()>=2);
 
     }
+
+
+    @Test
+    void existsUserByEmail() {
+        //given
+        User bhashi = new User(UUID.randomUUID().toString(), "bhashi@gmail.com", "1234", "Bhashitha");
+        User lahiru = new User(UUID.randomUUID().toString(), "lahiru@gmail.com", "1234", "Lahiru");
+        userRepository.save(bhashi);
+        userRepository.save(lahiru);
+
+        //when
+        assertTrue(userRepository.existsByEmail("bhashi@gmail.com"));
+        assertTrue(userRepository.existsByEmail("lahiru@gmail.com"));
+    }
 }
