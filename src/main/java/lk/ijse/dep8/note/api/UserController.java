@@ -4,9 +4,13 @@ import lk.ijse.dep8.note.dto.UserDTO;
 import lk.ijse.dep8.note.service.UserService;
 import lk.ijse.dep8.note.service.exseption.DuplicateEmailException;
 import lk.ijse.dep8.note.service.exseption.NotFoundException;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -20,8 +24,13 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public UserDTO registerUser(@RequestBody UserDTO user) {
-        //validate
+    public UserDTO registerUser(@RequestBody @Valid UserDTO user, Errors errors) {
+
+        if (errors.hasFieldErrors()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errors.getFieldErrors().get(0).getDefaultMessage());
+        }
+
+
         return userService.registerUser(user);
 
     }
@@ -47,9 +56,11 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{userId:[A-Fa-f0-9\\-]{36}}", consumes = "application/json")
-    public void updateUser(@PathVariable String userId, @RequestBody UserDTO user) {
-        /* Todo: validate the user*/
+    public void updateUser(@PathVariable String userId, @Valid @RequestBody UserDTO user, Errors errors) {
 
+        if (errors.hasFieldErrors()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errors.getFieldErrors().get(0).getDefaultMessage());
+        }
 
         userService.updateUser(user);
 

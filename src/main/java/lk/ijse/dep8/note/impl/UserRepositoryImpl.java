@@ -13,7 +13,7 @@ public class UserRepositoryImpl extends CrudRepositoryImpl<User,String>implement
 
     @Override
     public boolean existsByEmail(String email) {
-       return !entityManager.createQuery("select u FROM lk.ijse.dep8.note.entity.User u WHERE User.email = :email")
+       return !entityManager.createQuery("select u FROM lk.ijse.dep8.note.entity.User u WHERE u.email = :email")
                 .setParameter("email", email).getResultList().isEmpty();
     }
 
