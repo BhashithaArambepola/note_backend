@@ -18,7 +18,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("Classpath:application.yaml")
 @EnableTransactionManagement
 public class JpaConfig {
 
@@ -58,6 +57,8 @@ public class JpaConfig {
         return hikariDataSource;
     }
 
+
+    @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }

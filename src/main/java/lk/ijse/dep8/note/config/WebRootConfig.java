@@ -3,6 +3,7 @@ package lk.ijse.dep8.note.config;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -12,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Properties;
 
 @Configuration
+
 @Import(JpaConfig.class)
 public class WebRootConfig {
 
