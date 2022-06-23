@@ -5,23 +5,28 @@ import lk.ijse.dep8.note.entity.SuperEntity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class CrudRepositoryImpl<T extends SuperEntity, ID extends Serializable> implements CrudRepository<T,ID> {
+public abstract class CrudRepositoryImpl<T extends SuperEntity, ID extends Serializable> implements CrudRepository<T, ID> {
     @PersistenceContext
     protected EntityManager entityManager;
 
-    private Class<T>entityClzObj;
+    private Class<T> entityClzObj;
 
     @Override
     public T save(T entity) {
         return entityManager.merge(entity);
     }
 
+    public CrudRepositoryImpl() {
+        this.entityClzObj = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
     @Override
     public void deleteById(ID pk) {
-entityManager.remove(entityManager.getReference(entityClzObj,pk));
+        entityManager.remove(entityManager.getReference(entityClzObj, pk));
     }
 
     @Override
@@ -31,16 +36,16 @@ entityManager.remove(entityManager.getReference(entityClzObj,pk));
 
     @Override
     public Optional<T> findById(ID pk) {
-        return Optional.of(entityManager.find(entityClzObj,pk));
+        return Optional.of(entityManager.find(entityClzObj, pk));
     }
 
     @Override
     public List<T> findAll() {
-        return entityManager.createQuery("SELECT e FROM "+entityClzObj.getName()+" e",entityClzObj).getResultList();
+        return entityManager.createQuery("SELECT e FROM " + entityClzObj.getName() + " e", entityClzObj).getResultList();
     }
 
     @Override
     public long count() {
-        return entityManager.createQuery("SELECT count (e) FROM "+entityClzObj.getName()+" e",Long.class).getSingleResult();
+        return entityManager.createQuery("SELECT count (e) FROM " + entityClzObj.getName() + " e", Long.class).getSingleResult();
     }
 }
